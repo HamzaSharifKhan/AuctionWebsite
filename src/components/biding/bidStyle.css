@@ -1,0 +1,21 @@
+.time_tag{
+     font-weight: bold;
+     margin-bottom: 2rem;
+}
+.biding_information{
+     display: flex;
+     justify-content: space-around;
+}
+.hieghest_bid{
+     font-weight: bold;
+}
+.Input_Box{
+     float: right;
+}
+.input_for_new_bids{
+     outline: none;
+     margin-right: 0.5rem;
+}
+.your_Bid{
+     margin-right: 0.5rem;
+}
