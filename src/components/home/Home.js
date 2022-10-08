@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Table } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { collection, getDocs, doc, getDoc, deleteDoc } from "firebase/firestore";
 import toast, { Toaster } from 'react-hot-toast';
 import { db } from '../../firebase';
 import './homeStyle.css'
-import NavBar from '../NavBar';
+import NavBar from '../../Navbar/NavBar';
 export default function Home() {
      const userDetail = JSON.parse(localStorage.getItem('User'))
-     const history = useNavigate()
      const [array, setArray] = useState([])
      const [data, setData] = useState([])
      const [loader, setLoader] = useState(true)
@@ -46,8 +45,9 @@ export default function Home() {
                     setUserData(doc.data())
                })
      }, [])
+
      useEffect(() => {
-          var d;
+         //Sorting Dates 
           data.map((ls, index) => {
                let date_1 = new Date(ls.endDateforBiding);
                let date_2 = new Date();
@@ -64,14 +64,6 @@ export default function Home() {
           setArray(data.sort((first_Argument, second_Argument) => parseFloat(first_Argument.endDateforBiding) - parseFloat(second_Argument.endDateforBiding)));
      }, [data])
 
-     console.log("The Data is", data)
-     const handleItem = (e, i) => {
-
-          // history.push({
-          //      pathname: "/bid",
-          //      state: { auctionItemData: e, ItemId: e.ItemFirebaseId }
-          // });
-     }
      const handleDelete = (Item) => {
           const docRef = doc(db, 'Auction', Item.ItemFirebaseId)
           deleteDoc(docRef)
@@ -81,65 +73,60 @@ export default function Home() {
                .catch((e) => {
                     toast.error("Server encounter an unexception condition")
                })
-          setArray(array.filter((ls)=> ls.ItemFirebaseId != Item.ItemFirebaseId))
-}
+          setArray(array.filter((ls) => ls.ItemFirebaseId != Item.ItemFirebaseId))
+     }
 
-return (
-
-
-     <Container>
-          <main>
-               <NavBar title="Current Auction" />
-               {
-                    loader ?
-                         <div class="d-flex justify-content-center align-items-center">
-                              <div class="spinner-grow d-flex " role="status">
-                                   <span class="sr-only">Loading...</span>
+     return (
+          <Container>
+               <main>
+                    <NavBar title="Current Auction" />
+                    {
+                         loader ?
+                              <div class="d-flex justify-content-center align-items-center">
+                                   <div class="spinner-grow d-flex " role="status">
+                                        <span class="sr-only">Loading...</span>
+                                   </div>
                               </div>
-                         </div>
-                         :
-                         <>
-                              <Table striped bordered hover >
-                                   <tbody>
-                                        <tr>
-                                             <td><b>Product</b></td>
-                                             <td><b>Seller</b></td>
-                                             <td><b>Top Bid</b></td>
-                                             <td><b>Time Remaining</b></td>
-                                             <td><b>Delete</b></td>
+                              :
+                              <>
+                                   <Table striped bordered hover >
+                                        <tbody>
+                                             <tr>
+                                                  <td><b>Product</b></td>
+                                                  <td><b>Seller</b></td>
+                                                  <td><b>Top Bid</b></td>
+                                                  <td><b>Days Remaining</b></td>
+                                                  <td><b>Delete</b></td>
+                                             </tr>
+                                             {
+                                                  array && array.map((item, index) =>
+                                                       // Conditional rendering if Date has passed
+                                                       <>
+                                                            {(item.endDateforBiding <= 0) ?
+                                                                 null
+                                                                 :
+                                                                 <tr key={index}>
 
-
-                                        </tr>
-                                        {
-                                             array && array.map((item, index) =>
-                                                  // Conditional rendering if Date has passed
-                                                  <>
-                                                       {(item.endDateforBiding <= 0) ?
-                                                            null
-                                                            :
-                                                            <tr key={index}>
-
-                                                                 <td ><Link to='/bid' state={{auctionItemData: item, ItemId: item.ItemFirebaseId}} style={{textDecoration: "none"}}><span className="product">{item.productName}</span></Link></td>
-                                                                 <td>{item.sellerName}</td>
-                                                                 <td>{item.topBid}</td>
-                                                                 <td>{item.endDateforBiding}</td>
-                                                                 <td>{userDetail.userId === item.sellerID ? <span className="delete" onClick={() => handleDelete(item)}>Delete</span> : null}</td>
-                                                            </tr>
-                                                       }
-                                                  </>
-                                             )
-                                        }
-                                   </tbody>
-                              </Table>
-                              <footer className='lower_Home_Page'>
-                                   <Link to='/newAuction'><button type="button" className="btn btn-primary">New Auction</button></Link>
-                                   <p>Your current wallet: <span className='wallet'>{userData?.wallet}$</span></p>
-                              </footer>
-                         </>
-               }
-
-          </main>
-          <Toaster />
-     </Container>
-);
+                                                                      <td ><Link to='/bid' state={{ auctionItemData: item, ItemId: item.ItemFirebaseId }} style={{ textDecoration: "none" }}><span className="product">{item.productName}</span></Link></td>
+                                                                      <td>{item.sellerName}</td>
+                                                                      <td>{item.topBid}</td>
+                                                                      <td>{item.endDateforBiding}</td>
+                                                                      <td>{userDetail.userId === item.sellerID ? <span className="delete" data-toggle="modal" data-target="#exampleModal" onClick={() => handleDelete(item)}>Delete</span> : null}</td>
+                                                                 </tr>
+                                                            }
+                                                       </>
+                                                  )
+                                             }
+                                        </tbody>
+                                   </Table>
+                                   <footer className='lower_Home_Page'>
+                                        <Link to='/newAuction'><button type="button" className="btn btn-primary">New Auction</button></Link>
+                                        <p>Your current wallet: <span className='wallet'>{userData?.wallet}$</span></p>
+                                   </footer>
+                              </>
+                    }
+               </main>
+               <Toaster />
+          </Container>
+     );
 }

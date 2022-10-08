@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Container } from 'react-bootstrap'
-import NavBar from '../NavBar'
+import NavBar from '../../Navbar/NavBar'
 import { Card } from "react-bootstrap"
 import '../newAuction/newAuctionStyle.css'
 import './bidStyle.css'
@@ -17,6 +17,7 @@ export default function Bid() {
      const [loader, setLoader] = useState(false)
      const [userData, setUserData] = useState()
      const userId = JSON.parse(localStorage.getItem("UserID"))
+     const userName = JSON.parse(localStorage.getItem("User")) 
      useEffect(() => {
           const docRef = doc(db, 'Users', userId)
           getDoc(docRef)
@@ -39,7 +40,9 @@ export default function Bid() {
           try {
                const docRef = doc(db, 'Auction', AuctionItemID)
                await updateDoc(docRef, {
-                    topBid: newBid
+                    topBid: newBid,
+                    topBidUser: userName.name
+
                })
                toast.success("Your bid is now highest")
           } catch (e) {
@@ -53,7 +56,7 @@ export default function Bid() {
                     wallet: newBalance
                })
                setLoader(false)
-               navigate("/home")
+               navigate("/homes")
                setTimeout(() => {
                     toast.success(`Your remaining balance is: ${newBalance}`)
                     return

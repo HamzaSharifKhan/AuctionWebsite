@@ -4,7 +4,7 @@ import { Form, Button, Card, Alert } from "react-bootstrap"
 import { Link, useNavigate } from "react-router-dom"
 import { Container } from "react-bootstrap"
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, collection, addDoc } from "firebase/firestore";
+import { doc, setDoc,} from "firebase/firestore";
 import { db } from "../firebase"
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -20,13 +20,18 @@ export default function Signup() {
   async function handleSubmit(e) {
     e.preventDefault()
     var name =nameRef.current.value
-    if(name.length<3){
-       toast.error("The number of Name characters should be greater than 3")
+    var password =passwordRef.current.value
+    if(name.length<=3 || name.length>20){
+       toast.error("The number of Name characters should be greater than 3 and less than 20")
        return
+    }
+    if(password.length<8){
+      toast.error("The max password length should be 8")
+      return
     }
 
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
-      return setError("Passwords do not match")
+      toast.error("Passwords do not match")
     }
     setLoading(true)
 
@@ -48,8 +53,9 @@ export default function Signup() {
       navigate("/")
       toast.success("Acount is created successfully")
       // history.push("/")
-    } catch {
+    } catch(e) {
       setError("Failed to create an account")
+      toast.error(e.message)
     }
 
     setLoading(false)
@@ -85,7 +91,7 @@ export default function Signup() {
               {
                 !loading ?
                   <Button className="w-100" type="submit">
-                    Log In
+                    Sign up
                   </Button>
                   :
                   <Button className="w-100" type="submit">

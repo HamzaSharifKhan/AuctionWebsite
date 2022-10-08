@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react"
 // import {firebase} from "firebase/app"
-import { Form, Button, Card, Alert } from "react-bootstrap"
+import { Form, Button, Card } from "react-bootstrap"
 // import { useAuth } from "../contexts/AuthContext"
 import { Link, useNavigate } from "react-router-dom"
 import { Container } from "react-bootstrap"
 import toast, { Toaster } from 'react-hot-toast';
-import { doc, setDoc, collection, addDoc, getDocs, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { db } from "../firebase"
 export default function Login({ AuthLogin }) {
@@ -14,9 +14,8 @@ export default function Login({ AuthLogin }) {
   const passwordRef = useRef()
   const navigate = useNavigate()
   // const { login } = useAuth()
-  const [error, setError] = useState("")
+
   const [loading, setLoading] = useState(false)
-  const [detail, setDetail] = useState()
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -61,7 +60,6 @@ export default function Login({ AuthLogin }) {
         <Card className="w-100" style={{ maxWidth: "400px" }}>
           <Card.Body>
             <h2 className="text-center mb-4">Log In</h2>
-            {error && <Alert variant="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit}>
               <Form.Group id="email">
                 <Form.Label>Email</Form.Label>
