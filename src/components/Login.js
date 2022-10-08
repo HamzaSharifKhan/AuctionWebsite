@@ -25,8 +25,6 @@ export default function Login({ AuthLogin }) {
       .then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
-        console.log(user.uid)
-
         fetchUserData(user.uid)
         toast.success("Login successfully")
         setLoading(false)
@@ -47,7 +45,6 @@ export default function Login({ AuthLogin }) {
     const docRef = doc(db, "Users", id)
     getDoc(docRef)
       .then((doc) => {
-        console.log(doc.data(), "Here is Vaalue")
         localStorage.setItem("User", JSON.stringify(doc.data()));
         localStorage.setItem("UserID", JSON.stringify(id));
         AuthLogin();
@@ -55,7 +52,6 @@ export default function Login({ AuthLogin }) {
       })
 
   }
-  console.log('The Data is', detail)
   return (
     <>
       <Container
